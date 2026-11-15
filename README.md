@@ -86,6 +86,41 @@ cd ../frontend
 npm test
 ```
 
+## Production deployment
+
+Deploy the Django API and PostgreSQL database on Render, and deploy the Vite frontend on Vercel.
+
+### Render backend
+
+1. Create a PostgreSQL database in Render and note its database name, user, password, internal hostname, and port.
+2. Create a Render **Web Service** from this repository with root directory `backend`, runtime Python, and branch `main`.
+3. Use these commands:
+
+   Build:
+   ```bash
+   pip install -r requirements.txt && python manage.py collectstatic --noinput
+   ```
+
+   Start:
+   ```bash
+   gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+   ```
+
+4. Configure these environment variables on the Render service:
+   - `DJANGO_SETTINGS_MODULE=config.settings.prod`
+   - `DJANGO_SECRET_KEY` – a newly generated private secret
+   - `DJANGO_DEBUG=False`
+   - `DJANGO_ALLOWED_HOSTS` – the Render service hostname, without `https://`
+   - `CORS_ALLOWED_ORIGINS` – the Vercel site origin, such as `https://your-site.vercel.app`
+   - `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, and `POSTGRES_PORT` – use the Render database values, preferably its internal hostname
+5. Run `python manage.py migrate` once for the deployed database, then run `python manage.py seed_courses` to add the initial courses.
+
+### Vercel frontend
+
+Set the Vercel project root directory to `frontend`. Configure the environment variable `VITE_API_URL` to the Render service URL followed by `/api/v1`, for example `https://your-api.onrender.com/api/v1`. Redeploy the frontend after changing the variable.
+
+Configure SMTP environment variables on Render if production email verification and password reset emails should be delivered. Do not put secrets in Vercel variables prefixed with `VITE_` or commit them to the repository.
+
 ## Website pages and portals
 
 The public website includes home, about, course catalog, and contact pages, along with sign-in, student registration, and email verification. The contact page lets prospective students send an enquiry. Sign-in is shared across roles and redirects users to the appropriate portal.
@@ -131,7 +166,9 @@ flowchart LR
 
 ### Backend (`backend/.env.example`)
 - `DJANGO_SECRET_KEY` – secret key for Django.
-- `DEBUG` – set to `True` for local dev.
+- `DJANGO_DEBUG` – set to `True` for local development and `False` in production.
+- `DJANGO_ALLOWED_HOSTS` – comma-separated hostnames allowed to serve the backend.
+- `CORS_ALLOWED_ORIGINS` – comma-separated frontend origins allowed to call the API.
 - `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, `POSTGRES_PORT` – DB connection.
 - `EMAIL_BACKEND` – e.g., `django.core.mail.backends.console.EmailBackend` (dev) or `django.core.mail.backends.smtp.EmailBackend`.
 - `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`, `EMAIL_USE_SSL` – SMTP settings.
@@ -139,8 +176,8 @@ flowchart LR
 - `DEFAULT_FROM_EMAIL` – sender address.
 
 ### Frontend (`frontend/.env.example`)
-- `VITE_API_BASE_URL` – base URL of the backend API (e.g., `http://localhost:8000/api/v1/`).
-- `VITE_AUTH_TOKEN_KEY` – key used to store the JWT in localStorage (default: `authToken`).
+- `VITE_API_URL` – base URL of the backend API (e.g., `http://localhost:8000/api/v1`).
+- `VITE_INSTITUTE_NAME` – public institute name displayed by the frontend.
 
 ## Installing animation support
 
