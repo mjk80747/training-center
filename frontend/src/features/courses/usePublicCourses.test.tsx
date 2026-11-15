@@ -11,6 +11,31 @@ vi.mock('../../api/courses', () => ({
 describe('usePublicCourses', () => {
   beforeEach(() => vi.clearAllMocks());
 
+  it('orders public courses in the requested display order', async () => {
+    vi.mocked(listCourses).mockResolvedValue({
+      data: {
+        count: 6,
+        results: ['DA', 'FED', 'JCORE', 'JFS', 'PFS', 'PYCORE'].map((code, index) => ({
+          id: index + 1,
+          code,
+        })),
+      },
+    } as AxiosResponse);
+
+    const { result } = renderHook(() => usePublicCourses());
+
+    await waitFor(() => {
+      expect(result.current.courses.map((course) => course.code)).toEqual([
+        'PYCORE',
+        'JCORE',
+        'FED',
+        'PFS',
+        'JFS',
+        'DA',
+      ]);
+    });
+  });
+
   it('reports an unavailable backend and retries the course request', async () => {
     vi.mocked(listCourses)
       .mockRejectedValueOnce(new axios.AxiosError('Network Error', 'ERR_NETWORK'))

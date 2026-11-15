@@ -4,6 +4,15 @@ import { listCourses } from '../../api/courses';
 import { normalizeList } from '../../lib/normalizeList';
 import type { CourseItem } from './types';
 
+const publicCourseOrder = new Map([
+  'PYCORE',
+  'JCORE',
+  'FED',
+  'PFS',
+  'JFS',
+  'DA',
+].map((code, index) => [code, index]));
+
 function getCourseLoadError(error: unknown) {
   if (!axios.isAxiosError(error)) {
     return 'Something went wrong while loading courses. Please try again.';
@@ -29,7 +38,15 @@ export function usePublicCourses() {
     setError('');
 
     listCourses({ signal: controller.signal })
-      .then((response) => setCourses(normalizeList<CourseItem>(response.data)))
+      .then((response) => {
+        const courses = normalizeList<CourseItem>(response.data);
+        courses.sort((a, b) => (
+          (publicCourseOrder.get(a.code) ?? publicCourseOrder.size)
+          - (publicCourseOrder.get(b.code) ?? publicCourseOrder.size)
+          || a.code.localeCompare(b.code)
+        ));
+        setCourses(courses);
+      })
       .catch((requestError: unknown) => {
         if (controller.signal.aborted) return;
         setCourses([]);
