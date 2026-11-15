@@ -6,7 +6,11 @@ from .base import *
 
 DEBUG = False
 
-database_url = os.getenv('DATABASE_URL')
+database_url = (
+    os.getenv('DATABASE_URL')
+    or os.getenv('POSTGRES_URL')
+    or os.getenv('POSTGRES_URL_NON_POOLING')
+)
 if database_url:
     parsed_database_url = urlparse(database_url)
     database_name = unquote(parsed_database_url.path.lstrip('/'))

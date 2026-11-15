@@ -152,7 +152,7 @@ flowchart LR
 - `DJANGO_DEBUG` – set to `True` for local development and `False` in production.
 - `DJANGO_ALLOWED_HOSTS` – comma-separated hostnames allowed to serve the backend.
 - `CORS_ALLOWED_ORIGINS` – comma-separated frontend origins allowed to call the API.
-- `DATABASE_URL` – optional PostgreSQL connection URL, supported by production settings; otherwise configure `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, and `POSTGRES_PORT`.
+- `DATABASE_URL` – optional PostgreSQL connection URL, supported by production settings. Neon deployments may use `POSTGRES_URL` or `POSTGRES_URL_NON_POOLING`; otherwise configure `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, and `POSTGRES_PORT`.
 - `EMAIL_BACKEND` – e.g., `django.core.mail.backends.console.EmailBackend` (dev) or `django.core.mail.backends.smtp.EmailBackend`.
 - `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`, `EMAIL_USE_SSL` – SMTP settings.
 - `EMAIL_VERIFICATION_CODE_TTL_MINUTES`, `EMAIL_VERIFICATION_RESEND_COOLDOWN_SECONDS`, `EMAIL_VERIFICATION_MAX_ATTEMPTS` – verification flow.
