@@ -86,40 +86,23 @@ cd ../frontend
 npm test
 ```
 
-## Production deployment
+## Vercel deployment
 
-Deploy the Django API and PostgreSQL database on Render, and deploy the Vite frontend on Vercel.
+The root [vercel.json](./vercel.json) configures Vercel Services to deploy the Vite frontend and Django API together. Vercel provides the frontend and serverless backend; PostgreSQL is provisioned through a Marketplace provider such as Neon.
 
-### Render backend
-
-1. Create a PostgreSQL database in Render and note its database name, user, password, internal hostname, and port.
-2. Create a Render **Web Service** from this repository with root directory `backend`, runtime Python, and branch `main`.
-3. Use these commands:
-
-   Build:
-   ```bash
-   pip install -r requirements.txt && python manage.py collectstatic --noinput
-   ```
-
-   Start:
-   ```bash
-   gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
-   ```
-
-4. Configure these environment variables on the Render service:
+1. In Vercel, change the project root directory to the repository root so Vercel can read `vercel.json`.
+2. Install the Neon integration from the Vercel Marketplace, create a database, and connect it to the project. Set `DATABASE_URL` for the deployment environment.
+3. Configure these Vercel environment variables:
    - `DJANGO_SETTINGS_MODULE=config.settings.prod`
    - `DJANGO_SECRET_KEY` – a newly generated private secret
    - `DJANGO_DEBUG=False`
-   - `DJANGO_ALLOWED_HOSTS` – the Render service hostname, without `https://`
-   - `CORS_ALLOWED_ORIGINS` – the Vercel site origin, such as `https://your-site.vercel.app`
-   - `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, and `POSTGRES_PORT` – use the Render database values, preferably its internal hostname
-5. Run `python manage.py migrate` once for the deployed database, then run `python manage.py seed_courses` to add the initial courses.
+   - `DJANGO_ALLOWED_HOSTS` – the Vercel hostname, without `https://`
+   - `CORS_ALLOWED_ORIGINS` – the frontend origin, such as `https://your-site.vercel.app`
+   - `VITE_API_URL=/api/v1`
+4. Redeploy after setting environment variables.
+5. Before using the site, run `python manage.py migrate` and `python manage.py seed_courses` against the production database. Create the first admin with `python manage.py create_admin --email admin@yourdomain.com --password "<strong-unique-password>"`. Run these commands locally with the production database environment variables; never commit them.
 
-### Vercel frontend
-
-Set the Vercel project root directory to `frontend`. Configure the environment variable `VITE_API_URL` to the Render service URL followed by `/api/v1`, for example `https://your-api.onrender.com/api/v1`. Redeploy the frontend after changing the variable.
-
-Configure SMTP environment variables on Render if production email verification and password reset emails should be delivered. Do not put secrets in Vercel variables prefixed with `VITE_` or commit them to the repository.
+Vercel's function filesystem is ephemeral. Configure persistent object storage before relying on uploaded learning materials, assignments, or certificate files. Configure a production email provider before relying on account verification and password reset emails. Do not put secrets in variables prefixed with `VITE_` or commit them to the repository.
 
 ## Website pages and portals
 
@@ -169,7 +152,7 @@ flowchart LR
 - `DJANGO_DEBUG` – set to `True` for local development and `False` in production.
 - `DJANGO_ALLOWED_HOSTS` – comma-separated hostnames allowed to serve the backend.
 - `CORS_ALLOWED_ORIGINS` – comma-separated frontend origins allowed to call the API.
-- `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, `POSTGRES_PORT` – DB connection.
+- `DATABASE_URL` – optional PostgreSQL connection URL, supported by production settings; otherwise configure `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST`, and `POSTGRES_PORT`.
 - `EMAIL_BACKEND` – e.g., `django.core.mail.backends.console.EmailBackend` (dev) or `django.core.mail.backends.smtp.EmailBackend`.
 - `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`, `EMAIL_USE_SSL` – SMTP settings.
 - `EMAIL_VERIFICATION_CODE_TTL_MINUTES`, `EMAIL_VERIFICATION_RESEND_COOLDOWN_SECONDS`, `EMAIL_VERIFICATION_MAX_ATTEMPTS` – verification flow.
