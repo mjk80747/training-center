@@ -1,0 +1,30 @@
+export const routes = {
+  home: '/',
+  about: '/about',
+  courses: '/courses',
+  contact: '/contact',
+  login: '/login',
+  register: '/register',
+  verifyEmail: '/verify-email',
+  forgotPassword: '/forgot-password',
+  admin: {
+    dashboard: '/admin',
+    students: '/admin/students',
+    batches: '/admin/batches',
+    leads: '/admin/leads',
+    courses: '/admin/courses',
+    fees: '/admin/fees',
+    reports: '/admin/reports',
+  },
+  trainer: {
+    dashboard: '/trainer',
+    attendance: '/trainer/attendance',
+    materials: '/trainer/materials',
+  },
+  student: {
+    dashboard: '/student',
+    courses: '/student/courses',
+    fees: '/student/fees',
+    certificates: '/student/certificates',
+  },
+} as const;

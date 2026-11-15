@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="370" height="76" viewBox="0 0 370 76" fill="none">
+  <defs>
+    <linearGradient id="brand" x1="5" y1="5" x2="66" y2="68" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6758F5"/>
+      <stop offset="1" stop-color="#4338CA"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="6" width="64" height="64" rx="19" fill="url(#brand)"/>
+  <path d="M37 20v24c0 8-4 12-12 12-4 0-7-1-10-4l6-7c1 2 2 3 4 3 3 0 4-2 4-5V20h8Z" fill="#fff"/>
+  <path d="M43 20h9v16l12-16h11L61 37l15 18H65L52 39v16h-9V20Z" fill="#fff"/>
+  <text x="88" y="32" fill="#F7FAFF" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="800" letter-spacing="-.6">KSR IT SOLUTIONS</text>
+  <text x="88" y="56" fill="#8795AA" font-family="Courier New, monospace" font-size="12" font-weight="700" letter-spacing="3.2">TRAIN · BUILD · PLACE</text>
+</svg>
