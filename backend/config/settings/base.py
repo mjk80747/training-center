@@ -23,7 +23,12 @@ if not SECRET_KEY:
     else:
         raise ImproperlyConfigured('DJANGO_SECRET_KEY must be configured when DEBUG is disabled.')
 
-ALLOWED_HOSTS = [host.strip() for host in os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()]
+allowed_hosts = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+for vercel_host_variable in ('VERCEL_URL', 'VERCEL_PROJECT_PRODUCTION_URL'):
+    vercel_host = os.getenv(vercel_host_variable, '').strip()
+    if vercel_host:
+        allowed_hosts.append(vercel_host)
+ALLOWED_HOSTS = list(dict.fromkeys(host.strip() for host in allowed_hosts if host.strip()))
 INSTITUTE_NAME = os.getenv('INSTITUTE_NAME', 'JK IT SOLUTIONS')
 EMAIL_BACKEND = os.getenv(
     'EMAIL_BACKEND',

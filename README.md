@@ -96,7 +96,7 @@ The root [vercel.json](./vercel.json) configures Vercel Services to deploy the V
    - `DJANGO_SETTINGS_MODULE=config.settings.prod`
    - `DJANGO_SECRET_KEY` – a newly generated private secret
    - `DJANGO_DEBUG=False`
-   - `DJANGO_ALLOWED_HOSTS` – the Vercel hostname, without `https://`
+   - `DJANGO_ALLOWED_HOSTS` – the production Vercel hostname, without `https://`. The backend also adds Vercel's `VERCEL_URL` and `VERCEL_PROJECT_PRODUCTION_URL` system values when available, so deployment URLs are accepted.
    - `CORS_ALLOWED_ORIGINS` – the frontend origin, such as `https://your-site.vercel.app`
    - `VITE_API_URL=/api/v1`
 4. Redeploy after setting environment variables.
